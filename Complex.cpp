@@ -1,85 +1,89 @@
 #include "Complex.h"
+#include <cmath>
 
-#define EPS 1e-6
+using namespace std;
 
+constexpr double EPS = 1e-6;
 
 Complex::Complex()
+    : real(0), img(0)
 {
-	img = 0;
-	real = 0;
 }
 
-Complex::Complex(const double& real, const double& img)
+Complex::Complex(double real, double img)
+    : real(real), img(img)
 {
-	this->img = img;
-	this->real = real;
 }
 
-double Complex::getReal()
+double Complex::getReal() const
 {
-	return real;
+    return real;
 }
 
-double Complex::getImg()
+double Complex::getImg() const
 {
-	return img;
+    return img;
 }
 
-std::string Complex::toString()
+string Complex::toString() const
 {
-	std::string str_result = "real = " + std::to_string(real) + " img = " + std::to_string(img);
-	return str_result;
+    string str_result = "real = " + to_string(real) + " img = " + to_string(img);
+    return str_result;
 }
 
-void Complex::setReal(const double& new_real)
+void Complex::setReal(double new_real)
 {
-	real = new_real;
+    real = new_real;
 }
 
-void Complex::setImg(const double& new_img)
+void Complex::setImg(double new_img)
 {
-	img = new_img;
+    img = new_img;
 }
 
 void Complex::add(const Complex& another)
 {
-	img += another.img;
-	real += another.real;
+    img += another.img;
+    real += another.real;
 }
 
 void Complex::sub(const Complex& another)
 {
-	img -= another.img;
-	real -= another.real;
+    img -= another.img;
+    real -= another.real;
 }
 
 void Complex::mul(const Complex& another)
 {
-	real = (real * another.real) - (img * another.img);
-	img = (real * another.img) + (img * another.real);
+    double new_real = (real * another.real) - (img * another.img);
+    double new_img = (real * another.img) + (img * another.real);
+
+    real = new_real;
+    img = new_img;
 }
 
 bool Complex::div(const Complex& another)
 {
-	double sec_squares = (pow(another.img, 2) + pow(another.real,2));
-	if (sec_squares > EPS) {
-		real = ((real * another.real) + (img * another.img)) / sec_squares;
-		img = ((img * another.real) - (real * another.img)) / sec_squares;
-	}
-	}
+    double sec_squares = (another.img * another.img) + (another.real * another.real);
 
-const bool Complex::equ(const Complex& another)
-{
-	return (abs(real - another.real) < EPS) && (abs(img - another.img) < EPS);
+    if (sec_squares == 0.0) {
+        return false;
+    }
+
+    double new_real = ((real * another.real) + (img * another.img)) / sec_squares;
+    double new_img = ((img * another.real) - (real * another.img)) / sec_squares;
+
+    real = new_real;
+    img = new_img;
+    return true;
 }
 
-Complex Complex::conj()
+bool Complex::equ(const Complex& another) const
 {
-	return Complex(real, -img);
+    return (abs(real - another.real) < EPS) && (abs(img - another.img) < EPS);
 }
 
-
-
-
-
-
+Complex Complex::conj() const
+{
+    return Complex(real, -img);
+}
